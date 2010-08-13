@@ -1,0 +1,9 @@
+User name: vivacious6
+
+App name: vivacious
+
+Key:
+d910ca1fe2936899118dd5d32caabaf6
+
+Secret:
+47c7fe3023da99b1 
