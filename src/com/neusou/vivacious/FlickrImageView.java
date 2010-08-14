@@ -9,8 +9,5 @@ public class FlickrImageView extends ImageView{
 	public FlickrImageView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 	}
-
-	
-	
 	
 }

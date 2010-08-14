@@ -18,29 +18,33 @@ public abstract class RestfulCallback<S extends Parcelable> extends BroadcastRec
 	String xtraMethod;
 	String xtraResponse;
 	String xtraError;
+	String xtraRequest;
 	
 	/**
 	 * Creates a RestfulCallback with the intent action to listen
 	 * @param action
 	 */
 	public RestfulCallback(RestfulClient<?> client) {
-		callbackAction = client.CALLBACK_INTENT;
+		callbackAction = client.CALLBACK_ACTION;
 		xtraMethod = client.XTRA_METHOD;
 		xtraResponse = client.XTRA_RESPONSE;
 		xtraError = client.XTRA_ERROR;
+		xtraRequest = client.XTRA_REQUEST;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	final public void onReceive(Context context, Intent intent) {
 		Log.d(LOG_TAG,"onReceive "+intent.getAction());
-		
-		Log.d(LOG_TAG,"onReceive method:"+xtraMethod);
-		Log.d(LOG_TAG,"onReceive response:"+xtraResponse);
-		Log.d(LOG_TAG,"onReceive error:"+xtraError);
-		
+		/*
+		Log.d(LOG_TAG,"onReceive: xtra_method:"+xtraMethod);
+		Log.d(LOG_TAG,"onReceive: xtra_response:"+xtraResponse);
+		Log.d(LOG_TAG,"onReceive: xtra_error:"+xtraError);
+		Log.d(LOG_TAG,"onReceive: xtra_request:"+xtraRequest);
+		*/
 		Bundle b = intent.getExtras();
-    	RestfulClient<?> restfulClient = Flickr.getInstance().restfulClient;
-    	RestfulMethod restMethod = (RestfulMethod) b.getParcelable(xtraMethod);
+		Bundle request = intent.getBundleExtra(xtraRequest);
+    	RestfulMethod restMethod = (RestfulMethod) request.getParcelable(xtraMethod);
     	S response = (S) b.getParcelable(xtraResponse);
     	String error = b.getString(xtraError);
     	onCallback(restMethod, response, error);

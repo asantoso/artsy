@@ -3,6 +3,7 @@ package com.neusou.vivacious;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -12,16 +13,19 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.BufferedHttpEntity;
+import org.apache.http.entity.ContentProducer;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -37,7 +41,7 @@ import com.neusou.vivacious.RestfulClient.RestfulResponse;
 
 public class Main extends Activity {
 	
-	public static final String LOG_TAG = "Main";
+	public static final String LOG_TAG = Main.class.getCanonicalName();
     
 	RestfulCallback cb;
 	GestureDetector gd;
@@ -69,7 +73,6 @@ public class Main extends Activity {
 				
 				if(restMethod instanceof Flickr.FlickrGetFrob){
 					
-					/*
 					Intent rest = new Intent(Main.this, FlickrIntentService.class);
 	    			Flickr.FlickrGroupsSearch method = new Flickr.FlickrGroupsSearch();
 	    			method.text = "wallpaper";
@@ -77,12 +80,11 @@ public class Main extends Activity {
 	    	    	rest.putExtra(flickr.restfulClient.XTRA_METHOD, method);
 	    	    	//rest.putExtra(flickr.restfulClient.INTENE, "process response from groupsSearch");
 	    	    	startService(rest);
-	    	    	*/
-					
-	    	    	
+	    	    						
+	    	    	/*
 	    	    	Intent rest = new Intent(Main.this, FlickrIntentService.class);
 	    			Flickr.FlickrPhotosSearch method = new Flickr.FlickrPhotosSearch();
-	    			method.tags = "fractal";
+	    			method.tags = "geometry";
 	    			method.text = "";
 	    			method.sort = Flickr.FlickrPhotosSearch.Sort.Relevance.value;
 	    			method.in_gallery = false;
@@ -91,13 +93,15 @@ public class Main extends Activity {
 	    			Flickr flickr = Flickr.getInstance();
 	    	    	rest.putExtra(flickr.restfulClient.XTRA_METHOD, method);
 	    	    	startService(rest);
+	    	    	*/
+	    	    	
 	    	    	
 				}
 				
 				if(restMethod instanceof Flickr.FlickrGroupsSearch){
 					try {
 						JSONObject json = new JSONObject(response.data);
-						Log.d(Main.LOG_TAG,json.toString(2));
+						//Log.d(Main.LOG_TAG,json.toString(2));
 						JSONArray groups = json.getJSONObject("groups").getJSONArray("group");
 						JSONObject group = groups.getJSONObject(0);
 						String nsid = group.optString("nsid");
@@ -126,10 +130,8 @@ public class Main extends Activity {
 				if(restMethod instanceof Flickr.FlickrGroupsPoolsGetPhotos){
 					try{
 						JSONObject json = new JSONObject(response.data);
-						Log.d(Main.LOG_TAG,"GroupsPoolsGetPhotos: "+json.toString(2));
-						
-						JSONArray jsArrayPhotos = json.getJSONObject("photos").getJSONArray("photo");
-						
+						//Log.d(Main.LOG_TAG,"GroupsPoolsGetPhotos: "+json.toString(2));						
+						JSONArray jsArrayPhotos = json.getJSONObject("photos").getJSONArray("photo");						
 						photos = Flickr.Photo.parseArray(jsArrayPhotos);			
 						
 						
@@ -143,7 +145,7 @@ public class Main extends Activity {
 				if(restMethod instanceof Flickr.FlickrPhotosSearch){
 					try{
 						JSONObject json = new JSONObject(response.data);
-						Log.d(Main.LOG_TAG,"PhotosSearch: "+json.toString(2));						
+						//Log.d(Main.LOG_TAG,"PhotosSearch: "+json.toString(2));						
 						JSONArray jsArrayPhotos = json.getJSONObject("photos").getJSONArray("photo");						
 						photos = Flickr.Photo.parseArray(jsArrayPhotos);			
 
@@ -267,17 +269,53 @@ public class Main extends Activity {
     protected void onResume() {    
     	super.onResume();    	
     	
-    	cb.register(this);	
+    	cb.register(this);
+    	
+    	
+    	
+    	//Uri PhotoUri = Uri.fromParts("content", "//ssp",null);
+    	
+		getFrob();	
+    }
+    
+    public void getFrob(){
     	Intent rest = new Intent(this, FlickrIntentService.class);
     	//rest.setAction(getPackageName()+".REST");
     	Flickr flickr = Flickr.getInstance();
     	rest.putExtra(flickr.restfulClient.XTRA_METHOD, new Flickr.FlickrGetFrob());
     	rest.putExtra(flickr.restfulClient.INTENT_PROCESS_RESPONSE, "process response from getFrob");
     	startService(rest);
-    	
-    	
     }
 
+    public void test2(RestfulResponse response){
+    	try {
+			JSONObject json = new JSONObject(response.data);
+			Log.d(Main.LOG_TAG,json.toString(2));
+			JSONArray groups = json.getJSONObject("groups").getJSONArray("group");
+			JSONObject group = groups.getJSONObject(0);
+			String nsid = group.optString("nsid");
+			String name = group.optString("name");
+		
+			Log.d(Main.LOG_TAG,nsid+", "+name);
+			nsid = "1030135@N20";
+				
+			Intent restService = new Intent(Main.this, FlickrIntentService.class);
+			Flickr.FlickrGroupsPoolsGetPhotos method = new Flickr.FlickrGroupsPoolsGetPhotos();
+			method.group_id = nsid;
+			method.tags = null;
+			method.paging.page = 7;
+			method.paging.perPage = 30;
+			Flickr flickr = Flickr.getInstance();    			
+	    	restService.putExtra(flickr.restfulClient.XTRA_METHOD, method);
+	    	Log.d(Main.LOG_TAG, "startingService");
+	    	startService(restService);
+	    	
+		} catch (JSONException e) {		
+			e.printStackTrace();
+		}
+			
+    }
+    
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {    
     	super.onRestoreInstanceState(savedInstanceState);

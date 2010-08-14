@@ -45,17 +45,20 @@ public class Flickr {
 	public static final String param_tag_mode = "tag_mode";
 	public static final String param_in_gallery = "in_gallery";
 	public static final String param_content_type = "content_type";
+	public static final String param_photoset_id = "photoset_id";
+	public static final String param_photo_id = "photo_id";
 	
 	public static final String format_json = "json";
 	
-
 	public static final String[] methods = new String[] {
 			"flickr.auth.getFrob",
 			"flickr.groups.search",
 			"flickr.groups.pools.getPhotos", 
 			"flickr.groups.pools.getContext",
-			"flickr.photos.search",
-			"flickr.interestingness.getList"
+			"flickr.photos.search",			
+			"flickr.interestingness.getList",
+			"flickr.photosets.getPhotos",
+			"flickr.photos.getAllContexts",
 			};
 
 	public static final int METHOD_AUTH_GETFROB = 0;
@@ -64,6 +67,8 @@ public class Flickr {
 	public static final int METHOD_GROUPS_POOLS_GETCONTEXT = 3;
 	public static final int METHOD_PHOTOS_SEARCH = 4;
 	public static final int METHOD_INTERESTINGNESS_GETLIST = 5;
+	public static final int METHOD_PHOTOSETS_GETPHOTOS = 6;
+	public static final int METHOD_PHOTOS_GETALLCONTEXTS = 7;
 
 	public static final String API_KEY = "d910ca1fe2936899118dd5d32caabaf6";
 	public static final String API_SECRET = "47c7fe3023da99b1";
@@ -80,6 +85,8 @@ public class Flickr {
 		methodsMap.put(METHOD_GROUPS_POOLS_GETPHOTOS, FlickrGroupsPoolsGetPhotos.class);
 		methodsMap.put(METHOD_PHOTOS_SEARCH, FlickrPhotosSearch.class);
 		methodsMap.put(METHOD_INTERESTINGNESS_GETLIST, FlickrInterestingnessGetList.class);
+		methodsMap.put(METHOD_PHOTOSETS_GETPHOTOS, FlickrPhotosetsGetPhotos.class);
+		methodsMap.put(METHOD_PHOTOS_GETALLCONTEXTS, FlickrPhotosGetAllContexts.class);
 	}
 
 	private Flickr() {
@@ -395,9 +402,7 @@ public class Flickr {
 		}
 
 	}
-	
-	
-	
+		
 	public static class FlickrGroupsSearch implements RestfulClient.RestfulMethod{
 		
 		public String text = "background cute";
@@ -563,8 +568,115 @@ public class Flickr {
 		@Override
 		public void writeToParcel(Parcel dest, int flags) {		
 			
-		}		
+		}	
 		
+	}
+	
+	public static class FlickrPhotosetsGetPhotos implements RestfulClient.RestfulMethod{
+
+		public String photoset_id = "";
+		public Paging paging = new Paging();
+				
+		public static final Parcelable.Creator<FlickrPhotosetsGetPhotos> CREATOR = new Creator<FlickrPhotosetsGetPhotos>() {
+
+			@Override
+			public FlickrPhotosetsGetPhotos createFromParcel(Parcel source) {
+				FlickrPhotosetsGetPhotos obj = new FlickrPhotosetsGetPhotos();
+				obj.photoset_id = source.readString();
+				obj.paging = Paging.CREATOR.createFromParcel(source);
+				return obj;
+			}
+
+			@Override
+			public FlickrPhotosetsGetPhotos[] newArray(int size) {
+				return null;
+			}			
+		
+		};
+		
+		@Override
+		public int describeContents() {
+			return METHOD_PHOTOSETS_GETPHOTOS;
+		}
+
+		@Override
+		public void writeToParcel(Parcel dest, int flags) {
+			dest.writeString(photoset_id);
+			paging.writeToParcel(dest, flags);
+		}
+		
+		public void go(Bundle b) {
+					
+			Bundle data = new Bundle();				
+			data.putString(param_method, methods[METHOD_PHOTOSETS_GETPHOTOS]);
+			data.putString(param_api_key, API_KEY);
+			data.putString(param_format, format_json);
+			data.putString(param_photoset_id, photoset_id);
+			data.putString(param_page, Integer.toString(paging.getPage()));
+			data.putString(param_per_page, Integer.toString(paging.getPerPage()));
+			
+			Flickr flickr = Flickr.getInstance();
+			
+			try {
+				String request = flickr.createRequestString(data);
+				flickr.execute(request, b, HttpGet.class);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}		
+		}
+	}	
+	
+	
+	public static class FlickrPhotosGetAllContexts implements RestfulClient.RestfulMethod{
+
+		public String photo_id = "";
+		public Paging paging = new Paging();
+				
+		public static final Parcelable.Creator<FlickrPhotosGetAllContexts> CREATOR = new Creator<FlickrPhotosGetAllContexts>() {
+
+			@Override
+			public FlickrPhotosGetAllContexts createFromParcel(Parcel source) {
+				FlickrPhotosGetAllContexts obj = new FlickrPhotosGetAllContexts();
+				obj.photo_id = source.readString();
+				obj.paging = Paging.CREATOR.createFromParcel(source);
+				return obj;
+			}
+
+			@Override
+			public FlickrPhotosGetAllContexts[] newArray(int size) {
+				return null;
+			}			
+		
+		};
+		
+		@Override
+		public int describeContents() {
+			return METHOD_PHOTOS_GETALLCONTEXTS;
+		}
+
+		@Override
+		public void writeToParcel(Parcel dest, int flags) {
+			dest.writeString(photo_id);
+			paging.writeToParcel(dest, flags);
+		}
+		
+		public void go(Bundle b) {
+					
+			Bundle data = new Bundle();				
+			data.putString(param_method, methods[METHOD_PHOTOS_GETALLCONTEXTS]);
+			data.putString(param_api_key, API_KEY);
+			data.putString(param_format, format_json);
+			data.putString(param_photo_id, photo_id);
+			
+			Flickr flickr = Flickr.getInstance();
+			
+			try {
+				String request = flickr.createRequestString(data);
+				flickr.execute(request, b, HttpGet.class);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}		
+		}
 	}
 	
 }

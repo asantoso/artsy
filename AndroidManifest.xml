@@ -13,12 +13,12 @@
     	<service android:name=".FlickrIntentService" android:enabled="true">
     	</service>
     	
+    	<provider android:name=".BaseContentProvider"
+        		  android:authorities="com.neusou.vivacious.basecontentprovider">
+		</provider>
+		
     	<service android:name=".FlickrRestfulResponseProcessor" android:enabled="true">
-    		<meta-data android:name="xtra_method" android:value="com.neusou.vivacious.flickr.restful.CALL_METHOD" />
-    		<meta-data android:name="xtra_response" android:value="com.neusou.vivacious.flickr.restful.RESPONSE" />
-    		<meta-data android:name="xtra_error" android:value="com.neusou.vivacious.flickr.restful.ERROR" />
-    		<meta-data android:name="callback_intent" android:value="com.neusou.vivacious.flickr.restful.CALLBACK_INTENT" />
-    		
+    		<meta-data android:name="identifier" android:value="flickr" />
     		<intent-filter>    		
     		 	<action android:name="com.neusou.vivacious.flickr.restful.PROCESS_RESPONSE"/>
     		</intent-filter>
