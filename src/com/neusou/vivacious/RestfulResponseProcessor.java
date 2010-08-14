@@ -1,17 +1,19 @@
 package com.neusou.vivacious;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.neusou.vivacious.RestfulClient.RestfulResponse;
+import java.util.Set;
 
 import android.app.IntentService;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 
-public class RestfulResponseProcessor extends IntentService {
+import com.neusou.vivacious.RestfulClient.RestfulMethod;
+
+public abstract class RestfulResponseProcessor<S extends Parcelable> extends IntentService {
 	
 	public static final String LOG_TAG = RestfulResponseProcessor.class.getSimpleName();
 	
@@ -20,40 +22,51 @@ public class RestfulResponseProcessor extends IntentService {
 	}
 	
 	private void broadcastCallback(Bundle data, String action){		
-		RestfulClient.broadcastCallback(this,data,action);
+		RestfulClient.broadcastCallback(this, data, action);
 	}
 	
 	@Override
-	protected void onHandleIntent(Intent intent) {
+	final protected void onHandleIntent(Intent intent) {
 		String name = Thread.currentThread().getName();
 		String action = intent.getAction();
 		Bundle data = intent.getExtras();		
 		Log.d(LOG_TAG, name + ", " + action);
 			
-		Flickr f = Flickr.getInstance();
+		String xtra_method = null;
+		String xtra_response = null;
+		String xtra_error = null;
+		String callback_intent = null;
 		
-		if(action == null){			    	
-        	Bundle b = intent.getExtras();
-        	f.restfulClient.execute(b);
+		Bundle metadata;
+		try {
+			metadata = getBaseContext().getPackageManager().getServiceInfo(new ComponentName(this,FlickrRestfulResponseProcessor.class),PackageManager.GET_META_DATA).metaData;
+			//Info(App.class.getPackage().getName(), PackageManager.GET_META_DATA).metaData;
+			Set<String> metakeys = metadata.keySet();
+			for(String key : metakeys){
+				Log.d(LOG_TAG,"meta: "+key+":"+metadata.getString(key));
+			}
+			xtra_method = metadata.getString("xtra_method");
+			xtra_response = metadata.getString("xtra_response");
+			xtra_error = metadata.getString("xtra_error");
+			callback_intent = metadata.getString("callback_intent");
+			
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
 		}
-		else if(action.equals(f.restfulClient.INTENT_PROCESS_RESPONSE)){
-			if(data.containsKey(f.restfulClient.XTRA_METHOD)){
-				Parcelable restMethod = data.getParcelable(f.restfulClient.XTRA_METHOD);
-				RestfulResponse response = data.getParcelable(f.restfulClient.XTRA_RESPONSE);
-				try {
-					JSONObject jsonResponse = new JSONObject(response.data);
-					Log.d(LOG_TAG,jsonResponse.toString(3));
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}    		
-				
-			}else{
-				Log.d(LOG_TAG,"no data");
-			}    		
-    	}    
 		
-		broadcastCallback(data,f.restfulClient.CALLBACK_INTENT);
+		String error = data.getString(xtra_error);
+		
+		if(data.containsKey(xtra_method)){
+			Parcelable restMethod = data.getParcelable(xtra_method);
+			S response = data.getParcelable(xtra_response);
+			handleResponse(response, (RestfulMethod) restMethod, error);
+		}else{
+			Log.d(LOG_TAG,"no data");
+		}    		
+		 
+		broadcastCallback(data,callback_intent);
 	}
 	
+	protected abstract void handleResponse(S response, RestfulMethod method, String error);
 	
 }

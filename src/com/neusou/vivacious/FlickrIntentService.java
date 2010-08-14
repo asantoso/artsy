@@ -7,17 +7,16 @@ import android.util.Log;
 
 public class FlickrIntentService extends IntentService {
 
-	public static final String LOG_TAG = "FlickrIntentService";
+	public static final String LOG_TAG = FlickrIntentService.class.getCanonicalName();
 
 	public FlickrIntentService() {
-		super("FlickrIntentService");
+		super(FlickrIntentService.class.getName());
 	}
 		
 	@Override
 	protected void onHandleIntent(Intent intent) {		
 		String name = Thread.currentThread().getName();
 		String action = intent.getAction();
-		Bundle data = intent.getExtras();		
 		Log.d(LOG_TAG, name + ", " + action);
 			
 		if(action == null){
