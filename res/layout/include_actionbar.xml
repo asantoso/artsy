@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge
+	xmlns:android="http://schemas.android.com/apk/res/android" 
+    xmlns="http://schemas.android.com/apk/res/android"
+    android:background="#00000000"
+>
+
+	<LinearLayout 
+		android:id="@+id/actionbar"
+		android:layout_width="fill_parent"
+   		android:layout_height="wrap_content"
+   		android:layout_alignParentBottom="true"
+   		android:layout_gravity="center_vertical|left"   		     	
+    	android:paddingTop="4dip"
+    	android:paddingLeft="2dip"
+    	android:paddingRight="2dip"
+    	android:paddingBottom="1dip"
+    	android:orientation="horizontal"
+    	
+    	>
+		
+		<ImageButton
+			android:id="@+id/actionbar_viewinfo"
+			android:layout_width="48dip"
+			android:layout_height="48dip"			
+			android:layout_alignParentLeft="true"
+			android:layout_marginRight="2.5dip"
+			android:scaleType="centerInside"
+			android:src="@android:drawable/ic_menu_info_details"
+		/>
+		
+		<ImageButton
+			android:id="@+id/actionbar_setwallpaper"
+			android:layout_width="48dip"
+			android:layout_height="48dip"			
+			android:layout_marginRight="2.5dip"
+			android:scaleType="centerInside"
+			android:src="@android:drawable/ic_menu_gallery"
+		/>
+		
+		<ImageButton
+			android:id="@+id/actionbar_search"
+			android:layout_width="48dip"
+			android:layout_height="48dip"			
+			android:layout_marginRight="2.5dip"
+			android:scaleType="centerInside"			
+			android:src="@android:drawable/ic_menu_search"
+			
+		/>
+		
+		<ImageButton
+			android:id="@+id/actionbar_more"
+			android:layout_width="48dip"
+			android:layout_height="48dip"			
+			android:layout_marginRight="2.5dip"
+			android:scaleType="centerInside"			
+			android:src="@android:drawable/ic_menu_add"
+			
+		/>
+		
+	</LinearLayout>
+     
+</merge>
+ 

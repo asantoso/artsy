@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+	xmlns:android="http://schemas.android.com/apk/res/android" 
+    xmlns="http://schemas.android.com/apk/res/android"
+    android:background="#00000000">
+<ImageButton
+			android:id="@+id/more"
+			android:layout_width="48dip"
+			android:layout_height="48dip"			
+			android:layout_marginRight="2.5dip"
+			android:scaleType="centerInside"
+			android:src="@android:drawable/ic_menu_add"
+		/>
+</merge>

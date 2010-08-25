@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<item type="id" name="METHOD_AUTH_GETFROB" />	
+ 	<item type="id" name="METHOD_GROUPS_SEARCH" />
+ 	<item type="id" name="METHOD_GROUPS_POOLS_GETPHOTOS" />
+ 	<item type="id" name="METHOD_GROUPS_POOLS_GETCONTEXT" />
+ 	<item type="id" name="METHOD_PHOTOS_SEARCH" />
+ 	<item type="id" name="METHOD_INTERESTINGNESS_GETLIST" />
+ 	<item type="id" name="METHOD_PHOTOSETS_GETPHOTOS" />
+ 	<item type="id" name="METHOD_PHOTOS_GETALLCONTEXTS" />
+	<item type="id" name="METHOD_PHOTOS_GETINFO" />	
+ </resources>

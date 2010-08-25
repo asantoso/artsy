@@ -1,15 +1,199 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="#FF666666"
+    android:focusable="false"
+    android:isScrollContainer="false"
+    android:id="@+id/root"
     >    
-<ImageView 
-  android:layout_width="fill_parent" 
+    
+<RelativeLayout
+ 	android:layout_width="fill_parent" 
     android:layout_height="fill_parent" 
+    android:layout_marginTop="2dip"
+    android:layout_marginRight="2dip"
+    android:layout_marginBottom="0dip"
+    android:layout_marginLeft="2dip"
+    android:layout_above="@+id/captioncontainer"
+    android:layout_centerHorizontal="true"
+    
+    android:padding="0dip"
+    android:isScrollContainer="false"
+    
+>   
+ 
+<ImageView 
+  	android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"
+    
+   	android:layout_alignParentTop="true"
+   	android:layout_centerHorizontal="true"
+   	
+   	
+    android:paddingLeft="9dip"
+    android:paddingTop="7dip"
+    android:paddingBottom="11dip"
+    android:paddingRight="12dip"
+    
     android:id="@+id/image"
-    android:scaleType="centerInside"
+    android:scaleType="centerInside"       
+    android:background="@drawable/picture_frame"
+    android:focusableInTouchMode="true"
 >
    
 </ImageView>
+
+
+</RelativeLayout>
+
+
+<FrameLayout
+	android:id="@+id/captioncontainer"
+	android:layout_width="fill_parent" 
+    android:layout_height="100dip"    
+ 	android:layout_above="@+id/actionbar"
+ 	android:background="@android:drawable/bottom_bar"
+ 	android:isScrollContainer="false"
+>
+
+
+<LinearLayout
+	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    
+>
+<com.neusou.vivacious.MyScrollView
+	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"    
+    android:id="@+id/content1"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:scrollbars="vertical"
+    android:scrollbarFadeDuration="1000"
+    android:fadingEdge="vertical"
+	android:fadingEdgeLength="8dip"
+    android:clickable="true"    
+    android:nextFocusRight="@+id/actionbar"
+    android:nextFocusLeft="@+id/actionbar"
+>
+
+<RelativeLayout
+	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+   
+>
+	<com.neusou.vivacious.MyTextView
+ 	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:layout_marginRight="48dip"
+    android:gravity="left|top"     
+    android:padding="5dip"    
+    android:id="@+id/caption"
+    android:text=""
+    android:textStyle="bold"
+    android:shadowColor="#AA000000"
+    android:shadowDx="1"
+    android:shadowDy="2"
+    android:shadowRadius="2"
+    android:textColor="#FFffffff"
+    
+/>
+</RelativeLayout>
+</com.neusou.vivacious.MyScrollView>
+
+<com.neusou.vivacious.MyScrollView
+	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"    
+    android:id="@+id/content2"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:scrollbars="vertical"    
+    android:scrollbarFadeDuration="1000"
+    android:fadingEdge="vertical"
+	android:fadingEdgeLength="8dip"    
+    android:clickable="true"    
+    android:nextFocusRight="@+id/actionbar_search"
+    android:nextFocusLeft="@+id/actionbar_search"
+>
+<RelativeLayout
+	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    
+>
+<com.neusou.vivacious.MyTextView
+ 	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_marginRight="48dip"
+    
+    android:gravity="left|top"     
+    android:padding="5dip"
+    
+    android:id="@+id/caption2"
+    android:text="caption2"
+    android:textStyle="bold"
+    android:shadowColor="#AA000000"
+    android:shadowDx="1"
+    android:shadowDy="2"
+    android:shadowRadius="2"
+    android:textColor="#FFffffff"
+	
+
+ 
+/>
+
+</RelativeLayout>
+</com.neusou.vivacious.MyScrollView>
+
+<com.neusou.vivacious.MyScrollView
+	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"    
+    android:id="@+id/content3"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:scrollbars="vertical"
+    android:scrollbarFadeDuration="1000"
+    android:fadingEdge="vertical"
+	android:fadingEdgeLength="8dip"   
+    
+    android:clickable="true"
+    android:nextFocusRight="@+id/actionbar_search"
+    android:nextFocusLeft="@+id/actionbar_search"
+>
+<RelativeLayout
+	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:id="@+id/content3"
+    
+>
+<com.neusou.vivacious.MyTextView
+ 	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:gravity="left|top"     
+    android:padding="5dip"    
+    android:id="@+id/caption3"
+
+    android:text="caption3"
+    android:textStyle="bold"
+    android:shadowColor="#AA000000"
+    android:shadowDx="1"
+    android:shadowDy="2"
+    android:shadowRadius="2"
+    android:textColor="#FFffffff"
+
+ 
+/>
+</RelativeLayout>
+</com.neusou.vivacious.MyScrollView>
 </LinearLayout>
+</FrameLayout>
+
+<include layout="@layout/include_actionbar" 
+android:layout_alignParentBottom="true"
+android:id="@+id/actionbar"
+/>
+
+</RelativeLayout>

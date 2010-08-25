@@ -18,14 +18,15 @@
 <!-- for the Search Manager. -->
 
 <searchable xmlns:android="http://schemas.android.com/apk/res/android"
-    android:label="label"
-    android:hint="search_hint" 
-    android:searchMode="showSearchLabelAsBadge"
-    
+    android:label="@string/search_label"
+    android:hint="@string/search_hint" 
+    android:searchMode="showSearchLabelAsBadge"    
     android:voiceSearchMode="showVoiceSearchButton|launchRecognizer"
     android:voiceLanguageModel="free_form"
-    android:voicePromptText="invoke"
-
-    android:searchSuggestAuthority="com.example.android.apis.SuggestionProvider"
-    android:searchSuggestSelection=" ? "
+    android:voicePromptText="@string/search_voiceprompttext"    
+    android:searchButtonText="@string/search_buttontext"
+    android:includeInGlobalSearch="true"
+    android:inputType="textUri"
+    
+        
 />
