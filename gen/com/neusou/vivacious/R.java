@@ -12,8 +12,9 @@ public final class R {
     }
     public static final class drawable {
         public static final int actionbar_bg=0x7f020000;
-        public static final int icon=0x7f020001;
-        public static final int picture_frame=0x7f020002;
+        public static final int captioncontainer=0x7f020001;
+        public static final int icon=0x7f020002;
+        public static final int picture_frame=0x7f020003;
     }
     public static final class id {
         public static final int METHOD_AUTH_GETFROB=0x7f050000;
@@ -33,11 +34,11 @@ public final class R {
         public static final int caption=0x7f050013;
         public static final int caption2=0x7f050015;
         public static final int caption3=0x7f050017;
-        public static final int captioncontainer=0x7f050010;
+        public static final int captioncontainer=0x7f050011;
         public static final int content1=0x7f050012;
         public static final int content2=0x7f050014;
         public static final int content3=0x7f050016;
-        public static final int image=0x7f050011;
+        public static final int image=0x7f050010;
         public static final int more=0x7f05000e;
         public static final int root=0x7f05000f;
     }

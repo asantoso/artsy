@@ -3,6 +3,12 @@
  * Original file: /home/asantoso/workspaces/android/vivacious/src/com/neusou/vivacious/IRemoteServiceCallback.aidl
  */
 package com.neusou.vivacious;
+import java.lang.String;
+import android.os.RemoteException;
+import android.os.IBinder;
+import android.os.IInterface;
+import android.os.Binder;
+import android.os.Parcel;
 /**
  * Example of a callback interface used by IRemoteService to send
  * synchronous notifications back to its clients.  Note that this is a
@@ -20,7 +26,7 @@ public Stub()
 this.attachInterface(this, DESCRIPTOR);
 }
 /**
- * Cast an IBinder object into an com.neusou.vivacious.IRemoteServiceCallback interface,
+ * Cast an IBinder object into an IRemoteServiceCallback interface,
  * generating a proxy if needed.
  */
 public static com.neusou.vivacious.IRemoteServiceCallback asInterface(android.os.IBinder obj)
@@ -82,14 +88,14 @@ android.os.Parcel _data = android.os.Parcel.obtain();
 try {
 _data.writeInterfaceToken(DESCRIPTOR);
 _data.writeInt(value);
-mRemote.transact(Stub.TRANSACTION_valueChanged, _data, null, android.os.IBinder.FLAG_ONEWAY);
+mRemote.transact(Stub.TRANSACTION_valueChanged, _data, null, IBinder.FLAG_ONEWAY);
 }
 finally {
 _data.recycle();
 }
 }
 }
-static final int TRANSACTION_valueChanged = (android.os.IBinder.FIRST_CALL_TRANSACTION + 0);
+static final int TRANSACTION_valueChanged = (IBinder.FIRST_CALL_TRANSACTION + 0);
 }
 /**
      * Called when the service has a new value for you.

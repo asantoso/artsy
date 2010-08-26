@@ -3,6 +3,12 @@
  * Original file: /home/asantoso/workspaces/android/vivacious/src/com/neusou/vivacious/IRemoteService.aidl
  */
 package com.neusou.vivacious;
+import java.lang.String;
+import android.os.RemoteException;
+import android.os.IBinder;
+import android.os.IInterface;
+import android.os.Binder;
+import android.os.Parcel;
 /**
  * Example of defining an interface for calling on to a remote service
  * (running in another process).
@@ -19,7 +25,7 @@ public Stub()
 this.attachInterface(this, DESCRIPTOR);
 }
 /**
- * Cast an IBinder object into an com.neusou.vivacious.IRemoteService interface,
+ * Cast an IBinder object into an IRemoteService interface,
  * generating a proxy if needed.
  */
 public static com.neusou.vivacious.IRemoteService asInterface(android.os.IBinder obj)
@@ -149,9 +155,9 @@ _data.recycle();
 }
 }
 }
-static final int TRANSACTION_processData = (android.os.IBinder.FIRST_CALL_TRANSACTION + 0);
-static final int TRANSACTION_registerCallback = (android.os.IBinder.FIRST_CALL_TRANSACTION + 1);
-static final int TRANSACTION_unregisterCallback = (android.os.IBinder.FIRST_CALL_TRANSACTION + 2);
+static final int TRANSACTION_processData = (IBinder.FIRST_CALL_TRANSACTION + 0);
+static final int TRANSACTION_registerCallback = (IBinder.FIRST_CALL_TRANSACTION + 1);
+static final int TRANSACTION_unregisterCallback = (IBinder.FIRST_CALL_TRANSACTION + 2);
 }
 public int processData(int data) throws android.os.RemoteException;
 /**

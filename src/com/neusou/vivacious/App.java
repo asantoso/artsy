@@ -1,5 +1,10 @@
 package com.neusou.vivacious;
 
+import java.util.concurrent.TimeUnit;
+
+import com.neusou.async.UserTaskExecutionScope;
+import com.neusou.web.ImageUrlLoader2;
+
 import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
@@ -16,6 +21,8 @@ public class App extends Application{
 	
 	private static final String LOG_TAG = Logger.registerLog(App.class);
 	public static WebView mWebView;
+	
+	
 	 static final FrameLayout.LayoutParams FILL = 
 	        new FrameLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, 
 	                         ViewGroup.LayoutParams.FILL_PARENT);
@@ -23,6 +30,21 @@ public class App extends Application{
 	        new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 
 	                         ViewGroup.LayoutParams.WRAP_CONTENT);
 	
+	public static MyImageLoaderService mImageLoaderService;
+	 
+	public ServiceConnection mImageLoaderServiceConn = new ServiceConnection() {
+		
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			Logger.l(Logger.DEBUG, LOG_TAG, "onServiceDisconnected "+name.toString());			
+		}
+		
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			Logger.l(Logger.DEBUG, LOG_TAG, "onServiceConnected "+ name.toString());
+			mImageLoaderService = ((MyImageLoaderService.ServiceBinder) service).getService();			
+		}
+	};
 	
 	public ServiceConnection mFlickrServiceConn = new ServiceConnection() {		
 		@Override
@@ -36,14 +58,27 @@ public class App extends Application{
 		}
 	};
 	
+	static public float pixelDensity;
+	
+	public static int toDip(int px){
+		return (int)(pixelDensity * px);
+	}
+	
 	@Override
 	public void onCreate() {	
-		super.onCreate();
-			
+		super.onCreate();		
+		pixelDensity = getResources().getDisplayMetrics().density;
 		Flickr.getInstance().setContext(this);
 		bindService(new Intent(App.this,FlickrService.class), mFlickrServiceConn, Context.BIND_AUTO_CREATE);
-		//startService(new Intent(App.this,FlickrService.class));
+		bindService(new Intent(App.this,MyImageLoaderService.class), mImageLoaderServiceConn, Context.BIND_AUTO_CREATE);
 	}	
+	
+	@Override
+	public void onTerminate() {	
+		super.onTerminate();
+		unbindService(mFlickrServiceConn);
+		unbindService(mImageLoaderServiceConn);
+	}
 	
 	public static void setupWebView(Context ctx){
 		App.mWebView = new WebView(ctx);		

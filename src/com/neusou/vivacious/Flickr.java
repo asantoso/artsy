@@ -560,17 +560,30 @@ public class Flickr {
 	}	
 	
 	public static class FlickrInterestingnessGetList extends RestfulClient.BaseRestfulMethod{
-
+		
+		public Paging paging = new Paging();
+		
+		public static final Parcelable.Creator<FlickrInterestingnessGetList> CREATOR = new Creator<FlickrInterestingnessGetList>() {
+			
+			@Override
+			public FlickrInterestingnessGetList[] newArray(int size) {
+				return null;
+			}
+			
+			@Override
+			public FlickrInterestingnessGetList createFromParcel(Parcel source) {
+				FlickrInterestingnessGetList obj = new FlickrInterestingnessGetList();
+				obj.paging = Paging.CREATOR.createFromParcel(source);
+				return obj;
+			}
+		}; 
+		
 		@Override
 		public void go(Bundle b) {
 			Bundle data = new Bundle();
 			data.putString(param_method, restfulMethodMap.get(METHOD_GROUPS_POOLS_GETPHOTOS));
 			data.putString(param_api_key, API_KEY);
 			data.putString(param_format, format_json);
-			//data.putString(param_group_id, group_id);
-			//data.putString(param_tags, tags);
-			//data.putString(param_page, Integer.toString(paging.getPage()));
-			//data.putString(param_per_page, Integer.toString(paging.getPerPage()));
 			
 			Flickr flickr = Flickr.getInstance();			
 			try {
@@ -586,12 +599,12 @@ public class Flickr {
 
 		@Override
 		public int describeContents() {
-			return 0;
+			return METHOD_INTERESTINGNESS_GETLIST;
 		}
 
 		@Override
 		public void writeToParcel(Parcel dest, int flags) {		
-			
+			paging.writeToParcel(dest, flags);
 		}	
 		
 	}
@@ -823,7 +836,6 @@ public class Flickr {
 			}		
 		}
 	}
-	
 	
 	
 	 

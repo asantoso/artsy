@@ -37,11 +37,13 @@ public class FlickrService extends Service {
 		Logger.l(Logger.DEBUG, LOG_TAG, "onCreate");			
 	}
 	
+	/*
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		//Logger.l(Logger.DEBUG, LOG_TAG, "onStartCommand. action:"+intent.getAction());		
 		return super.onStartCommand(intent, flags, startId);
 	}
+	*/
 	
 	@Override
 	public void onStart(Intent intent, int startId) {

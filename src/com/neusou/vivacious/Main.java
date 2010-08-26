@@ -2,6 +2,8 @@ package com.neusou.vivacious;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -29,35 +31,28 @@ import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.TouchDelegate;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.GestureDetector.OnGestureListener;
-import android.view.ViewGroup.LayoutParams;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.neusou.bioroid.image.ImageLoader;
 import com.neusou.bioroid.restful.RestfulCallback;
 import com.neusou.bioroid.restful.RestfulClient.RestfulMethod;
 import com.neusou.bioroid.restful.RestfulClient.RestfulResponse;
@@ -96,6 +91,10 @@ public class Main extends BaseActivity {
 
 	Configuration config;
 	int w,h;
+	int mCaptionContainer_height = mCaptionContainer_height_normal;
+	static final int mCaptionContainer_height_normal = 64;
+	static final int mCaptionContainer_height_expanded = 200;
+	
 	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
@@ -106,7 +105,6 @@ public class Main extends BaseActivity {
 		updateDueToOrientationChange();
 	}
 	
-	int mCaptionContainer_height = 200;
 	
 	void updateDueToOrientationChange(){
 		updateLayoutParams(R.id.captioncontainer, currentPage*-w,0,0,0);
@@ -128,11 +126,11 @@ public class Main extends BaseActivity {
 		if(config != null && config.orientation == Configuration.ORIENTATION_LANDSCAPE){
 			w = metrics.widthPixels;
 			h = metrics.heightPixels;
-			mCaptionContainer_height = 100;
+			//mCaptionContainer_height /= 2;
 		}else{
 			w = metrics.widthPixels;
 			h = metrics.heightPixels;
-			mCaptionContainer_height = 100;
+			//mCaptionContainer_height *= 2;
 		}		
 		if(config != null){
 			Log.d(LOG_TAG,config.orientation+", displaydim: "+w+", "+h);
@@ -197,16 +195,275 @@ public class Main extends BaseActivity {
 		
 		waitServiceLatch = new CountDownLatch(1);
 
+		
 		bindService(new Intent(getApplicationContext(), FlickrService.class),
 				mFlickrServiceConn, Context.BIND_AUTO_CREATE);
+		
+		/*
 		bindService(new Intent(getApplicationContext(),
 				FlickrRemoteService.class), mRemoteConnection,
 				Context.BIND_AUTO_CREATE);
+		 */
+		
 
+	
+		
+	}
+
+	protected void onDestroy() {
+		super.onDestroy();
+		unbindService(mFlickrServiceConn);
+		unbindService(mRemoteConnection);
+	};
+	@Override
+	protected void onStart() {
+		super.onStart();
+		flickr = Flickr.getInstance();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		mFlickerRestfulCallback.unregister(this);
+		unregisterReceiver(wakeupbr);
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		setIntent(intent);
+		handleIntent(intent);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		new WaitLatchThread(waitServiceLatch).start();
+		mFlickerRestfulCallback.register(this);
+		registerReceiver(wakeupbr,	new IntentFilter(FlickrRemoteService.WAKE_UP));		
+	}
+	
+	@Override
+	protected void onPostResume() {
+		super.onPostResume();
+		updateDisplayDimension();
+		updateDueToOrientationChange();
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		query = savedInstanceState.getString("query");
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putString("query", query);
+		
+	}
+
+	public void bindViews() {
+		mImage = (ImageView) findViewById(R.id.image);
+		mCaption = (TextView) findViewById(R.id.caption);
+		mCaption2 = (TextView) findViewById(R.id.caption2);
+		mCaption3 = (TextView) findViewById(R.id.caption3);
+		mCaptionContainer = (FrameLayout) findViewById(R.id.captioncontainer);
+		
+		mContent1 = (MyScrollView) findViewById(R.id.content1);
+		mContent2 = (MyScrollView) findViewById(R.id.content2);
+		mContent3 = (MyScrollView) findViewById(R.id.content3);
+	}
+
+	AnimationListener mCaptionContainerAnimationListener; 
+	
+	public void initObjects(){
 		Flickr flickr = Flickr.getInstance();
+		
+		mCaptionContainerAnimationListener = new AnimationListener() {
+			
+			@Override
+			public void onAnimationStart(Animation animation) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		
+		
+		mScrollViewGestureDetector = new GestureDetector(new OnGestureListener() {
+			@Override
+			public boolean onScroll(MotionEvent e1, MotionEvent e2,
+				float distanceX, float distanceY) {
+				Logger.l(Logger.DEBUG, LOG_TAG, "scrollView. onScroll dx"+distanceX);
+				final double minThreshold = 8;
+				if(Math.abs(distanceX) > minThreshold){
+					return false;
+				}
+				return true;
+			}
+	
+			@Override
+			public boolean onDown(MotionEvent e) {		
+				Logger.l(Logger.DEBUG, LOG_TAG, "scrollView. onDown");
+				return true;
+			}
+	
+			@Override
+			public boolean onFling(MotionEvent e1, MotionEvent e2,
+					float velocityX, float velocityY) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+	
+			@Override
+			public void onLongPress(MotionEvent e) {
 
-		mFlickerRestfulCallback = new RestfulCallback<RestfulResponse>(
-				flickr.restfulClient) {
+				Logger.l(Logger.DEBUG, LOG_TAG, "scrollView. onLongPress");
+			}
+	
+			@Override
+			public void onShowPress(MotionEvent e) {
+				Logger.l(Logger.DEBUG, LOG_TAG, "scrollView. onShowPress");
+				
+			}
+	
+			@Override
+			public boolean onSingleTapUp(MotionEvent e) {
+				Logger.l(Logger.DEBUG, LOG_TAG, "scrollView. onSingleTapUp");
+				return false;
+			}
+		});
+		
+		mCaptionGestureDetector = new GestureDetector(new OnGestureListener() {
+			@Override
+			public boolean onScroll(MotionEvent e1, MotionEvent e2,
+				float distanceX, float distanceY) {				
+				//Logger.l(Logger.DEBUG, LOG_TAG, "CaptionGesture. onScroll. dX:"+distanceX+", dY:"+distanceY);
+				mContent1.scrollBy(0, (int) distanceY);
+				mContent2.scrollBy(0, (int) distanceY);
+				mContent3.scrollBy(0, (int) distanceY);
+				return false;
+			}
+	
+			@Override
+			public boolean onDown(MotionEvent e) {				
+				return true;
+			}
+	
+			@Override
+			public boolean onFling(MotionEvent e1, MotionEvent e2,
+					float velocityX, float velocityY) {
+				//Logger.l(Logger.DEBUG, LOG_TAG, "CaptionGesture. onFling. vX:"+velocityX+" , vY:"+velocityY);
+				
+				
+				return false;
+			}
+	
+			@Override
+			public void onLongPress(MotionEvent e) {
+				Logger.l(Logger.DEBUG, LOG_TAG, "scrollView. onLongPress");
+			}
+	
+			@Override
+			public void onShowPress(MotionEvent e) {
+				Logger.l(Logger.DEBUG, LOG_TAG, "scrollView. onShowPress");
+			}
+	
+			@Override
+			public boolean onSingleTapUp(MotionEvent e) {
+				Logger.l(Logger.DEBUG,LOG_TAG,"onSingleTapUp");
+				
+				if(isCaptionContainerExpanded){
+					mCaptionContainer_height = mCaptionContainer_height_normal;	
+				}
+				else{
+					mCaptionContainer_height = mCaptionContainer_height_expanded;
+				}
+				
+				isCaptionContainerExpanded = !isCaptionContainerExpanded;
+				return false;
+			}
+		});
+	
+		
+		mImageGestureDetector = new GestureDetector(new OnGestureListener() {
+	
+			@Override
+			public boolean onSingleTapUp(MotionEvent e) {
+	
+				return false;
+			}
+	
+			@Override
+			public void onShowPress(MotionEvent e) {
+				// TODO Auto-generated method stub
+	
+			}
+	
+			@Override
+			public boolean onScroll(MotionEvent e1, MotionEvent e2,
+					float distanceX, float distanceY) {
+				// TODO Auto-generated method stub
+				return true;
+			}
+	
+			@Override
+			public void onLongPress(MotionEvent e) {
+				// TODO Auto-generated method stub
+	
+			}
+	
+			@Override
+			public boolean onFling(MotionEvent e1, MotionEvent e2,
+					float velocityX, float velocityY) {
+	
+				if (velocityX < 0) {
+					currentPhotoIndex++;
+				} else {
+					currentPhotoIndex--;
+				}
+	
+				if (photos == null || photos.length == 0) {
+					return true;
+				}
+	
+				if (currentPhotoIndex < 0) {
+					currentPhotoIndex = photos.length - 1;
+				} else {
+					currentPhotoIndex = currentPhotoIndex % photos.length;
+				}
+	
+				showImage(currentPhotoIndex);
+	
+				return false;
+			}
+	
+			@Override
+			public boolean onDown(MotionEvent e) {
+				return true;
+			}
+		});
+	
+		mFlickerRestfulCallback = new RestfulCallback<RestfulResponse>(flickr.restfulClient) {
 
 			@Override
 			public void onCallback(RestfulMethod restMethod,
@@ -281,22 +538,73 @@ public class Main extends BaseActivity {
 						boolean isLatest = isLatestCall(Flickr.METHOD_PHOTOS_GETINFO, callId);
 						if(isLatest){
 						JSONObject photoInfo = json.optJSONObject("photo");
-						photoInfo.remove("tags");
-						Log.d(Main.LOG_TAG, "PhotoGetInfo: "+ json.toString(2));
-						String title = photoInfo.optJSONObject("title")
-								.getString("_content");
-						String description = photoInfo.optJSONObject("description").getString("_content");						
-						String views = photoInfo.optString("views");
-						String realname = photoInfo.optJSONObject("owner").getString("realname");
-						String username = photoInfo.optJSONObject("owner").getString("username");
-						String dateUploaded = photoInfo.optString("dateuploaded");
-						mCaption.setText(title + "\n\n" + realname + "\n"+ views + " views");
-						mCaption2.setText(description.trim());						
-						mCaption3.setText(dateUploaded);
-						//mWebView.setBackgroundColor(Color.TRANSPARENT);
-						//String data = "<html><head><style type=\"text/css\">body{background:#transparent;}</style></head><body>"+description+"</body></html>";
-						//mWebView.loadData(data,"text/html", "utf-8");
+						JSONObject tagsWrapper = (JSONObject) photoInfo.remove("tags");
+						JSONArray  tags;
+						String tagsListStr = "";
+						if(tagsWrapper != null){
+							tags = tagsWrapper.optJSONArray("tag");
+							if(tags != null){
+								StringBuffer sb = new StringBuffer();
+								for(int i=0,n=tags.length();i<n;i++){
+									try{
+										sb.append(tags.optJSONObject(i).optString("raw"));
+										if(i < n-1){
+											sb.append(", ");
+										}
+									}catch(Exception e){										
+									}
+								}
+								tagsListStr = sb.toString();
+							}
+						}
 						
+						Log.d(Main.LOG_TAG, "PhotoGetInfo: "+ json.toString(2));
+						
+						String realname="";
+						String username="";
+						String location="";
+						String dateuploaded="";
+						String description="";
+						String title="";
+						String views = "";
+						
+						try{
+							title = photoInfo.optJSONObject("title").getString("_content");
+						}catch(NullPointerException e){							
+						}
+						try{
+							description = photoInfo.optJSONObject("description").getString("_content");
+						}catch(NullPointerException e){							
+						}
+						try{
+							views = photoInfo.optString("views");						
+						}catch(NullPointerException e){							
+						}
+						
+						try{
+							realname = photoInfo.optJSONObject("owner").optString("realname");
+						}catch(NullPointerException e){							
+						}
+						try{
+							username = photoInfo.optJSONObject("owner").optString("username");
+						}catch(NullPointerException e){							
+						}						
+						try{
+							location = photoInfo.optJSONObject("owner").optString("location");
+						}catch(NullPointerException e){							
+						}
+						try{
+							dateuploaded = photoInfo.optString("dateuploaded");
+						}catch(NullPointerException e){							
+						}
+						
+						mCaption.setText(title+"\n\n"+description.trim());
+						StringBuffer sb = new StringBuffer();
+						sb.append("uploaded by: ").append(username).append(realname.length()>0?(" ("+realname+")"):"")						
+						.append("\n\nlocation: ").append(location)
+						.append("\n\ndate uploaded: "+dateuploaded)
+						.append("\n\ntags: "+tagsListStr);
+						mCaption2.setText(sb.toString());
 						}						
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -309,265 +617,13 @@ public class Main extends BaseActivity {
 		};
 
 		
-		
-	}
-
-	protected void onDestroy() {
-		super.onDestroy();
-		unbindService(mFlickrServiceConn);
-		unbindService(mRemoteConnection);
-	};
-	@Override
-	protected void onStart() {
-		super.onStart();
-		flickr = Flickr.getInstance();
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		mFlickerRestfulCallback.unregister(this);
-		unregisterReceiver(wakeupbr);
-	}
-
-	@Override
-	protected void onNewIntent(Intent intent) {
-		super.onNewIntent(intent);
-		setIntent(intent);
-		handleIntent(intent);
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		//updateDueToOrientationChange();
-		new WaitLatchThread(waitServiceLatch).start();
-		mFlickerRestfulCallback.register(this);
-		registerReceiver(wakeupbr,	new IntentFilter(FlickrRemoteService.WAKE_UP));		
-	}
-	
-	@Override
-	protected void onPostResume() {
-		super.onPostResume();
-		updateDisplayDimension();
-	}
-
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-		query = savedInstanceState.getString("query");
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putString("query", query);
-	}
-
-	public void bindViews() {
-		mImage = (ImageView) findViewById(R.id.image);
-		mCaption = (TextView) findViewById(R.id.caption);
-		mCaption2 = (TextView) findViewById(R.id.caption2);
-		mCaption3 = (TextView) findViewById(R.id.caption3);
-		mCaptionContainer = (FrameLayout) findViewById(R.id.captioncontainer);
-		
-		mContent1 = (MyScrollView) findViewById(R.id.content1);
-		mContent2 = (MyScrollView) findViewById(R.id.content2);
-		mContent3 = (MyScrollView) findViewById(R.id.content3);
-	}
-
-	public void initObjects(){
-		mScrollViewGestureDetector = new GestureDetector(new OnGestureListener() {
-			@Override
-			public boolean onScroll(MotionEvent e1, MotionEvent e2,
-				float distanceX, float distanceY) {
-				Logger.l(Logger.DEBUG, LOG_TAG, "scrollView. onScroll dx"+distanceX);
-				final double minThreshold = 8;
-				if(Math.abs(distanceX) > minThreshold){
-					return false;
-				}
-				return true;
-			}
-	
-			@Override
-			public boolean onDown(MotionEvent e) {		
-				Logger.l(Logger.DEBUG, LOG_TAG, "scrollView. onDown");
-				return true;
-			}
-	
-			@Override
-			public boolean onFling(MotionEvent e1, MotionEvent e2,
-					float velocityX, float velocityY) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-	
-			@Override
-			public void onLongPress(MotionEvent e) {
-
-				Logger.l(Logger.DEBUG, LOG_TAG, "scrollView. onLongPress");
-			}
-	
-			@Override
-			public void onShowPress(MotionEvent e) {
-				Logger.l(Logger.DEBUG, LOG_TAG, "scrollView. onShowPress");
-				
-			}
-	
-			@Override
-			public boolean onSingleTapUp(MotionEvent e) {
-				Logger.l(Logger.DEBUG, LOG_TAG, "scrollView. onSingleTapUp");
-				return false;
-			}
-		});
-		
-		mCaptionGestureDetector = new GestureDetector(new OnGestureListener() {
-			@Override
-			public boolean onScroll(MotionEvent e1, MotionEvent e2,
-				float distanceX, float distanceY) {				
-				Logger.l(Logger.DEBUG, LOG_TAG, "CaptionGesture. onScroll. dX:"+distanceX+", dY:"+distanceY);
-				mContent1.scrollBy(0, (int) distanceY);
-				mContent2.scrollBy(0, (int) distanceY);
-				mContent3.scrollBy(0, (int) distanceY);
-				return false;
-			}
-	
-			@Override
-			public boolean onDown(MotionEvent e) {				
-				return true;
-			}
-	
-			@Override
-			public boolean onFling(MotionEvent e1, MotionEvent e2,
-					float velocityX, float velocityY) {
-				Logger.l(Logger.DEBUG, LOG_TAG, "CaptionGesture. onFling. vX:"+velocityX+" , vY:"+velocityY);
-				
-				
-				return false;
-			}
-	
-			@Override
-			public void onLongPress(MotionEvent e) {
-				Logger.l(Logger.DEBUG, LOG_TAG, "scrollView. onLongPress");
-			}
-	
-			@Override
-			public void onShowPress(MotionEvent e) {
-				Logger.l(Logger.DEBUG, LOG_TAG, "scrollView. onShowPress");
-			}
-	
-			@Override
-			public boolean onSingleTapUp(MotionEvent e) {
-				Logger.l(Logger.DEBUG,LOG_TAG,"onSingleTapUp");
-				
-				if(isCaptionContainerExpanded){
-					mCaptionContainer_height = 200;	
-				}
-				else{
-					mCaptionContainer_height = 400;
-				}
-				
-				isCaptionContainerExpanded = !isCaptionContainerExpanded;
-				return false;
-			}
-		});
-	
-		
-		mImageGestureDetector = new GestureDetector(new OnGestureListener() {
-	
-			@Override
-			public boolean onSingleTapUp(MotionEvent e) {
-	
-				return false;
-			}
-	
-			@Override
-			public void onShowPress(MotionEvent e) {
-				// TODO Auto-generated method stub
-	
-			}
-	
-			@Override
-			public boolean onScroll(MotionEvent e1, MotionEvent e2,
-					float distanceX, float distanceY) {
-				// TODO Auto-generated method stub
-				return true;
-			}
-	
-			@Override
-			public void onLongPress(MotionEvent e) {
-				// TODO Auto-generated method stub
-	
-			}
-	
-			@Override
-			public boolean onFling(MotionEvent e1, MotionEvent e2,
-					float velocityX, float velocityY) {
-	
-				if (velocityX < 0) {
-					currentPhotoIndex++;
-				} else {
-					currentPhotoIndex--;
-				}
-	
-				if (photos == null || photos.length == 0) {
-					return true;
-				}
-	
-				if (currentPhotoIndex < 0) {
-					currentPhotoIndex = photos.length - 1;
-				} else {
-					currentPhotoIndex = currentPhotoIndex % photos.length;
-				}
-	
-				showImage(currentPhotoIndex);
-	
-				return false;
-			}
-	
-			@Override
-			public boolean onDown(MotionEvent e) {
-				return true;
-			}
-		});
-	
 	}
 
 	public void initViews(){
 		mContent1.setGestureDetector(mScrollViewGestureDetector);
 		mContent2.setGestureDetector(mScrollViewGestureDetector);
 		mContent3.setGestureDetector(mScrollViewGestureDetector);
-		
-		/*
-		mContent2.setOnTouchListener(new View.OnTouchListener() {			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				Logger.l(Logger.DEBUG, LOG_TAG, "onTouch ");
-				return mScrollViewGestureDetector.onTouchEvent(event);
-			}
-		});
-		*/
-				
-		//mWebView = new WebView(this);
-		//mWebView.setFocusable(false);
-		//mWebView.setWebViewClient(new WebViewClient());
-		/*
-		RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-				RelativeLayout.LayoutParams.FILL_PARENT,				
-				RelativeLayout.LayoutParams.WRAP_CONTENT);
-		lp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-		lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-		*/		
-		//mWebView.setLayoutParams(lp);
-		
-		//mContent2.addView(mWebView);
-		
+			
 		LinearLayout.LayoutParams clp = new LinearLayout.LayoutParams(
 				w,mCaptionContainer_height);
 				clp.gravity = Gravity.TOP | Gravity.LEFT;
@@ -604,7 +660,7 @@ public class Main extends BaseActivity {
 					return true;
 				}else if(action == MotionEvent.ACTION_UP){					
 					float viewLeft = v.getLeft();
-					Logger.l(Logger.DEBUG, LOG_TAG, "actionUp viewleft:"+viewLeft);
+					//Logger.l(Logger.DEBUG, LOG_TAG, "actionUp viewleft:"+viewLeft);
 					
 					lastViewLeft = 0;
 					int dist = (int)(-viewLeft - (currentPage * w ));
@@ -666,7 +722,8 @@ public class Main extends BaseActivity {
 	private void updateLayoutParams(int id,int left, int top, int right, int bottom){
 		if(id == R.id.captioncontainer){			
 			RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-			RelativeLayout.LayoutParams.FILL_PARENT, mCaptionContainer_height);
+			RelativeLayout.LayoutParams.FILL_PARENT, App.toDip(mCaptionContainer_height));
+			
 			lp.addRule(RelativeLayout.ABOVE, R.id.actionbar);
 			lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 			lp.setMargins(left,top,right,bottom);
@@ -674,7 +731,7 @@ public class Main extends BaseActivity {
 		}
 		
 		else if(id == R.id.content1 || id == R.id.content2 || id == R.id.content3){
-			LinearLayout.LayoutParams clp = new LinearLayout.LayoutParams(w,mCaptionContainer_height);
+			LinearLayout.LayoutParams clp = new LinearLayout.LayoutParams(w, App.toDip(mCaptionContainer_height));
 			clp.gravity=Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL;		
 			mContent1.setLayoutParams(clp);
 			mContent2.setLayoutParams(clp);
@@ -693,9 +750,10 @@ public class Main extends BaseActivity {
 	//WebView mWebView;
 	
 	private void handleIntent(Intent intent) {
-		Toast.makeText(this, "handleIntent " + intent.getAction(), 1000).show();
+	//	Toast.makeText(this, "handleIntent " + intent.getAction(), 1000).show();
 		if (intent.getAction().equals(Intent.ACTION_SEARCH)) {
 			query = intent.getStringExtra(SearchManager.USER_QUERY);
+			query = query.replaceAll(" ", ",");
 			Toast.makeText(this, query, 1000).show();
 		}
 	}
@@ -726,8 +784,8 @@ public class Main extends BaseActivity {
 			} catch (InterruptedException e) {
 			}
 			Logger.l(Logger.DEBUG, "# thread wait for service", "continues..");
-			//doGroupsSearch(0,query);
-			doPhotoSearch(0, query, "ubud");
+			//doGroupsSearch(0,query);			
+			doPhotoSearch(0, query, null);
 		}
 	};
 
@@ -819,13 +877,31 @@ public class Main extends BaseActivity {
 		return mCallIds.get(methodId).equals(id);
 	}
 	
+	public void clearCaptions(){
+		mCaption.setText("");
+		mCaption2.setText("");
+		mCaption3.setText("");
+	}
+	
+	public void clearContents(){
+		mContent1.scrollTo(0, 0);
+		mContent2.scrollTo(0, 0);
+		mContent3.scrollTo(0, 0);
+		
+		clearCaptions();
+		currentPage = 0;
+		viewPage(mCaptionContainer, currentPage);
+	}
+	
 	public void showImage(int i) {
 		if (photos.length == 0 || i > photos.length) {
 			return;
 		}
 
-		mCaption.setText("");
-
+		
+		clearContents();
+		
+		
 		Photo currentPhoto = photos[i];
 
 		URL imageUrl;
@@ -895,7 +971,45 @@ public class Main extends BaseActivity {
 		}
 	}
 	
+	
+	
+	ImageLoader.AsyncListener mImageLoadingListener = new ImageLoader.AsyncListener() {
+		
+		@Override
+		public void onPublishProgress(ImageLoader.AsyncLoaderProgress progress) {
+			progress.imageView.setImageBitmap(progress.bitmap);			
+			progress.imageView.setTag(new WeakReference<Bitmap>(progress.bitmap));
+		}
+		
+		@Override
+		public void onPreExecute() {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void onPostExecute(ImageLoader.AsyncLoaderResult result) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void onCancelled() {
+			// TODO Auto-generated method stub
+			
+		}
+	};
 	public void showImage(URL bitmapUrl) {
+		
+		ImageLoader.AsyncLoaderInput input = new ImageLoader.AsyncLoaderInput();
+		input.imageView = mImage;
+		input.imageUri = bitmapUrl.toString();
+		
+		App.mImageLoaderService.loadImage(input, mImageLoadingListener);
+		
+//		App.mImageLoader.loadImageAsync(App.mImageLoadingScope, input, mImageLoadingListener );
+		
+		/*
 		HttpGet httpRequest = null;
 
 		try {
@@ -936,7 +1050,7 @@ public class Main extends BaseActivity {
 			e.printStackTrace();
 			return;
 		}
-
+*/
 	}
 
 	@Override
@@ -960,7 +1074,31 @@ public class Main extends BaseActivity {
 		int id = item.getItemId();
 		switch(id){
 			case OPTIONS_SET_WALLPAPER:{
-				
+				getSystemService(WALLPAPER_SERVICE);
+				new Thread(new Runnable() {					
+					@Override
+					public void run() {
+						boolean success = false;
+						try {
+							setWallpaper(((WeakReference<Bitmap>) mImage.getTag()).get());
+							success = true;
+						} catch (IOException e) {				
+							e.printStackTrace();
+						}					
+						final String msg;
+						if(success){
+							msg = "Image has been set as wallpaper.";
+						}else{
+							msg = "Internal error: image can not be set as wallpaper.";
+						}
+						runOnUiThread(new Runnable(){
+							@Override
+							public void run() {
+								Toast.makeText(Main.this, msg, 2000).show();								
+							}
+						});
+					}
+				}).start();
 				break;
 			}	
 		}

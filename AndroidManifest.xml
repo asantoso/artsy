@@ -4,31 +4,44 @@
       android:versionCode="1"
       android:versionName="0.01">
       
+    <uses-permission android:name="android.permission.BIND_WALLPAPER" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" /> 
-	<uses-sdk android:minSdkVersion="7" />
+    <uses-permission android:name="android.permission.SET_WALLPAPER" />
+    
+	<uses-sdk android:minSdkVersion="4" />
 	
     <application android:icon="@drawable/icon" android:label="@string/app_name"
     android:name=".App"
     android:debuggable="true"
-    >	
-    
+    >	    
     	<service android:name=".FlickrIntentService" android:enabled="true">
     		<meta-data android:name="identifier" android:value="flickr" />
     		<intent-filter>    		
     		 	<action android:name="com.neusou.vivacious.flickr.restful.PROCESS_RESPONSE"/>    		 	
     		</intent-filter>
     	</service>
+    	
+    	<service android:name=".MyImageLoaderService" android:enabled="true">  
+    		<meta-data android:name="name" android:value="ImageLoader" />
+    		<meta-data android:name="poolSize" android:value="1" />
+    		<meta-data android:name="maxPoolSize" android:value="10" />
+    		<meta-data android:name="timeout" android:value="1000" />
+    		<meta-data android:name="pendingSize" android:value="10" />
+    		<meta-data android:name="autoPurge" android:value="true" />    		  		  		
+    		<intent-filter>    		
+    		 	<action android:name="com.neusou.vivacious.imageloader.GET_IMAGE"/>    		 	
+    		</intent-filter>
+    	</service>
     	 
     	<service android:name=".FlickrService" android:enabled="true" >
     		<meta-data android:name="identifier" android:value="flickr" />
-    		<intent-filter>
-    		    		 	
+    		<intent-filter>    		    		 	
     		 	<action android:name="com.neusou.vivacious.flickr.restful.EXECUTE_REQUEST"/>
     		</intent-filter>
     	</service>   
     	
-    	<service android:name=".FlickrRemoteService" android:enabled="true" android:process=":remote">
-    		
+    	<service android:name=".FlickrRemoteService" android:enabled="true" android:process=":remote">    		
     	</service>    	 
     	  	 
     	 

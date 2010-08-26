@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+	android:tileMode="repeat"
+	android:dither="true" 
+	android:antialias="true"
+	android:gravity="top|left|clip_vertical|clip_horizontal" 
+	android:background="@android:drawable/bottom_bar"		
+>
+
+</bitmap>

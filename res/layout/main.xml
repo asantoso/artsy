@@ -1,27 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#FF666666"
+    android:background="#FFaaaaaa"
     android:focusable="false"
-    android:isScrollContainer="false"
-    android:id="@+id/root"
+    
     >    
     
 <RelativeLayout
  	android:layout_width="fill_parent" 
     android:layout_height="fill_parent" 
-    android:layout_marginTop="2dip"
+    android:layout_marginTop="3dip"
     android:layout_marginRight="2dip"
-    android:layout_marginBottom="0dip"
-    android:layout_marginLeft="2dip"
-    android:layout_above="@+id/captioncontainer"
+    android:layout_marginBottom="68dip"
+    android:layout_marginLeft="2dip"    
     android:layout_centerHorizontal="true"
-    
+    android:layout_above="@+id/actionbar"    
     android:padding="0dip"
-    android:isScrollContainer="false"
-    
+        
 >   
  
 <ImageView 
@@ -54,8 +52,7 @@
 	android:layout_width="fill_parent" 
     android:layout_height="100dip"    
  	android:layout_above="@+id/actionbar"
- 	android:background="@android:drawable/bottom_bar"
- 	android:isScrollContainer="false"
+ 	android:background="@android:drawable/bottom_bar" 	
 >
 
 
@@ -65,6 +62,7 @@
     android:orientation="horizontal"
     
 >
+
 <com.neusou.vivacious.MyScrollView
 	android:layout_width="fill_parent" 
     android:layout_height="wrap_content"    
@@ -72,7 +70,7 @@
     android:focusableInTouchMode="true"
     android:focusable="true"
     android:scrollbars="vertical"
-    android:scrollbarFadeDuration="1000"
+	android:padding="5dip"
     android:fadingEdge="vertical"
 	android:fadingEdgeLength="8dip"
     android:clickable="true"    
@@ -88,7 +86,7 @@
 	<com.neusou.vivacious.MyTextView
  	android:layout_width="fill_parent" 
     android:layout_height="wrap_content"
-    android:layout_marginRight="48dip"
+    android:layout_marginRight="0dip"
     android:gravity="left|top"     
     android:padding="5dip"    
     android:id="@+id/caption"
@@ -111,7 +109,7 @@
     android:focusableInTouchMode="true"
     android:focusable="true"
     android:scrollbars="vertical"    
-    android:scrollbarFadeDuration="1000"
+	android:padding="5dip"
     android:fadingEdge="vertical"
 	android:fadingEdgeLength="8dip"    
     android:clickable="true"    
@@ -127,7 +125,7 @@
  	android:layout_width="fill_parent" 
     android:layout_height="wrap_content"
     android:layout_alignParentTop="true"
-    android:layout_marginRight="48dip"
+    android:layout_marginRight="0dip"
     
     android:gravity="left|top"     
     android:padding="5dip"
@@ -155,10 +153,10 @@
     android:focusableInTouchMode="true"
     android:focusable="true"
     android:scrollbars="vertical"
-    android:scrollbarFadeDuration="1000"
+
     android:fadingEdge="vertical"
 	android:fadingEdgeLength="8dip"   
-    
+    android:padding="5dip"
     android:clickable="true"
     android:nextFocusRight="@+id/actionbar_search"
     android:nextFocusLeft="@+id/actionbar_search"
