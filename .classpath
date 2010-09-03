@@ -4,5 +4,7 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/neusou-lib"/>
+	<classpathentry kind="lib" path="lib/admob-sdk-android.jar"/>
+	<classpathentry kind="lib" path="lib/FlurryAgent.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

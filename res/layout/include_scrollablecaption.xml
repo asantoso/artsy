@@ -1,0 +1,167 @@
+<merge
+	xmlns:android="http://schemas.android.com/apk/res/android"
+>
+
+<FrameLayout	
+	android:id="@+id/captioncontainer"
+	android:layout_width="fill_parent" 
+    android:layout_height="100dip"    
+ 	android:layout_above="@+id/actionbar"
+ 	android:background="@android:drawable/bottom_bar" 	
+ 	android:visibility="gone"
+>
+
+<LinearLayout
+	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    
+>
+
+<com.neusou.artsy.MyScrollView
+	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"    
+    android:id="@+id/content1"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:scrollbars="vertical"
+	
+	android:paddingLeft="5dip"
+	android:paddingRight="5dip"
+	android:paddingTop="2dip"
+	android:paddingBottom="2dip"
+    
+    android:fadingEdge="vertical"
+	android:fadingEdgeLength="3dip"
+        
+    android:nextFocusRight="@+id/actionbar"
+    android:nextFocusLeft="@+id/actionbar"
+    
+    android:background="@color/solid_cc_1"
+>
+
+<RelativeLayout
+	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+   
+>
+	<com.neusou.artsy.MyTextView
+ 	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:layout_marginRight="0dip"
+    android:gravity="left|top"     
+    
+    android:id="@+id/caption"
+    android:text=""
+    android:textStyle="bold"
+    android:shadowColor="#AA000000"
+    android:shadowDx="1"
+    android:shadowDy="2"
+    android:shadowRadius="2"
+    android:textColor="#FFffffff"
+    
+/>
+</RelativeLayout>
+</com.neusou.artsy.MyScrollView>
+
+<com.neusou.artsy.MyScrollView
+	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"    
+    android:id="@+id/content2"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:scrollbars="vertical"    
+	android:padding="5dip"
+    android:fadingEdge="vertical"
+	android:fadingEdgeLength="3dip"    
+    
+    android:paddingLeft="5dip"
+	android:paddingRight="5dip"
+	android:paddingTop="2dip"
+	android:paddingBottom="2dip"
+        
+    android:nextFocusRight="@+id/actionbar_search"
+    android:nextFocusLeft="@+id/actionbar_search"
+    
+    android:background="@color/solid_cc_2"
+>
+<RelativeLayout
+	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    
+>
+<com.neusou.artsy.MyTextView
+ 	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_marginRight="0dip"
+    
+    android:gravity="left|top"     
+        
+    android:id="@+id/caption2"
+    android:text=""
+    android:textStyle="bold"
+    android:shadowColor="#AA000000"
+    android:shadowDx="1"
+    android:shadowDy="2"
+    android:shadowRadius="2"
+    android:textColor="#FFffffff"
+	
+
+ 
+/>
+
+</RelativeLayout>
+</com.neusou.artsy.MyScrollView>
+
+<com.neusou.artsy.MyScrollView
+	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"    
+    android:id="@+id/content3"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:scrollbars="vertical"
+
+    android:fadingEdge="vertical"
+	android:fadingEdgeLength="3dip"   
+    android:padding="5dip"
+    
+    android:paddingLeft="5dip"
+	android:paddingRight="5dip"
+	android:paddingTop="2dip"
+	android:paddingBottom="2dip"
+    
+    
+    android:nextFocusRight="@+id/actionbar_search"
+    android:nextFocusLeft="@+id/actionbar_search"
+    
+    android:background="@color/solid_cc_3"
+>
+<RelativeLayout
+	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:id="@+id/content3"
+    
+>
+<com.neusou.artsy.MyTextView
+ 	android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:gravity="left|top"     
+        
+    android:id="@+id/caption3"
+
+    android:text="caption3"
+    android:textStyle="bold"
+    android:shadowColor="#AA000000"
+    android:shadowDx="1"
+    android:shadowDy="2"
+    android:shadowRadius="2"
+    android:textColor="#FFffffff"
+
+ 
+/>
+</RelativeLayout>
+</com.neusou.artsy.MyScrollView>
+</LinearLayout>
+</FrameLayout>
+</merge>

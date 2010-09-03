@@ -1,0 +1,27 @@
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"    
+    android:padding="20dip"
+    android:layout_margin="10dip"
+>
+
+<Button 
+  	android:id="@+id/loadpage"
+  	android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"    
+   	android:layout_centerInParent="true"
+   	
+   	android:paddingLeft="20dip"
+   	android:paddingRight="20dip"
+   	
+   	android:gravity="center_vertical|center_horizontal"
+   	
+    android:text="load next set"   
+    android:textSize="15dip"
+    android:textStyle="bold"
+    android:textColor="#FFffffff"   
+    
+/>
+
+   </RelativeLayout>

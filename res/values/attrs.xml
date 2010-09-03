@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!-- 
+       <declare-styleable name="ModifiedGallery">
+            <attr name="gravity" format="integer"/>
+			<attr name="animationDuration" format="integer"/>
+			<attr name="spacing" format="integer"/>
+			<attr name="unselectedAlpha" format="float"/>
+       </declare-styleable>
+        -->
+</resources>

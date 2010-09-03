@@ -8,5 +8,9 @@
  	<item type="id" name="METHOD_INTERESTINGNESS_GETLIST" />
  	<item type="id" name="METHOD_PHOTOSETS_GETPHOTOS" />
  	<item type="id" name="METHOD_PHOTOS_GETALLCONTEXTS" />
-	<item type="id" name="METHOD_PHOTOS_GETINFO" />	
+	<item type="id" name="METHOD_PHOTOS_GETINFO" />
+	
+	<item type="id" name="tag_galleryadapter_image" />
+	<item type="id" name="tag_galleryadapter_image_data" />
+	<item type="id" name="tag_galleryadapter_loadpage_data" />					
  </resources>

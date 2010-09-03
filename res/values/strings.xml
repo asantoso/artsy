@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, Main!</string>
-    <string name="app_name">vivacious</string>
-    
+    <string name="app_name">Artsy</string>    
     <string name="search_label">Find Images</string>
     <string name="search_hint"></string>
     <string name="search_buttontext">Find</string>

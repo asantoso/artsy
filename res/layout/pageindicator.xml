@@ -1,0 +1,68 @@
+
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" 
+    android:layout_height="32dip"
+    android:id="@+id/pageindicators_container"
+    android:gravity="center_vertical|center_horizontal"
+    android:orientation="horizontal"
+    android:layout_above="@+id/captioncontainer"
+    android:paddingLeft="0dip"
+    android:paddingRight="0dip"
+    android:layout_marginLeft="0dip"
+    android:layout_marginRight="0dip"
+    android:layout_marginBottom="3dip"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    
+    android:background="#99aaaaaa"    
+    
+>
+
+    <ImageView 
+    android:id="@+id/bg"
+	android:layout_width="fill_parent" 
+    android:layout_height="9dip"
+    android:background="@drawable/button_onoff_indicator_off"
+    android:layout_marginLeft="50dip"
+    android:layout_marginRight="50dip"
+    android:layout_centerVertical="true"
+    />
+    
+    <ImageView
+    android:id="@+id/indicator" 
+	android:layout_width="50dip" 
+    android:layout_height="14dip"
+    android:scaleType="fitXY"
+    android:background="@drawable/orangebutton_ldpi"
+    android:layout_centerVertical="true"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="5dip"
+    
+    />
+    
+    
+    <ImageView 
+    android:id="@+id/prevpage" 
+	android:layout_width="32dip" 
+    android:layout_height="32dip"
+    android:scaleType="centerInside"
+    android:src="@drawable/expander_ic_minimized_left"
+    android:layout_alignParentLeft="true"
+    android:layout_centerVertical="true"
+    
+    />
+   
+    <ImageView
+    android:id="@+id/nextpage" 
+	android:layout_width="32dip" 
+    android:layout_height="32dip"
+    android:scaleType="centerInside"
+    android:src="@drawable/expander_ic_minimized_right"
+    android:layout_alignParentRight="true"
+    android:layout_centerVertical="true"
+    
+        
+    />
+   
+</RelativeLayout>
