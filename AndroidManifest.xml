@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.neusou.artsy"
-      android:versionCode="2"
-      android:versionName="0.02">
+      android:versionCode="3"
+      android:versionName="0.03">
       
     <uses-permission android:name="android.permission.BIND_WALLPAPER" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     
-	<uses-sdk android:minSdkVersion="4" />
+	<uses-sdk android:minSdkVersion="5" />
 	
 	<supports-screens 
 	android:smallScreens="true"
@@ -54,11 +54,10 @@
     	</service>   
     	
     	<service android:name=".FlickrRemoteService" android:enabled="true" android:process=":remote">    		
-    	</service>    	 
-    	  	 
+    	</service>     	  	 
     	 
     	<provider android:name=".BaseContentProvider"
-        		  android:authorities="com.neusou.artsy.basecontentprovider">
+			android:authorities="com.neusou.artsy.basecontentprovider">
 		</provider>
 		
 		<!-- 

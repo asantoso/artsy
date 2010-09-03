@@ -1,7 +1,7 @@
 package com.neusou.artsy;
 
-import com.neusou.vivacious.IRemoteService;
-import com.neusou.vivacious.IRemoteServiceCallback;
+import com.neusou.artsy.IRemoteService;
+import com.neusou.artsy.IRemoteServiceCallback;
 
 import android.app.Service;
 import android.content.Intent;
