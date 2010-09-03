@@ -96,10 +96,28 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f080000;
+        public static final int applying_wallpaper=0x7f08000a;
+        public static final int confirm_setwallpaper=0x7f080009;
+        public static final int fetching_nextpage=0x7f08000b;
+        public static final int fetching_prevpage=0x7f08000c;
+        public static final int find_images=0x7f080008;
+        public static final int location=0x7f08000e;
+        public static final int next=0x7f080010;
+        public static final int no=0x7f080016;
+        public static final int no_active_network=0x7f080006;
+        public static final int no_data=0x7f080005;
+        public static final int no_more_images=0x7f080012;
+        public static final int please_try_again=0x7f080007;
+        public static final int previous=0x7f080011;
         public static final int search_buttontext=0x7f080003;
         public static final int search_hint=0x7f080002;
         public static final int search_label=0x7f080001;
         public static final int search_voiceprompttext=0x7f080004;
+        public static final int searching_for=0x7f080013;
+        public static final int set_wallpaper_successful=0x7f080014;
+        public static final int tags=0x7f08000f;
+        public static final int uploaded_by=0x7f08000d;
+        public static final int yes=0x7f080015;
     }
     public static final class style {
         public static final int Theme_FlickrLogin=0x7f090000;

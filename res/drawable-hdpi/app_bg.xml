@@ -14,7 +14,7 @@
 		android:bottom="0dp">
 
 		<shape>
-			<gradient android:startColor="#99000000" android:endColor="#77000000"
+			<gradient android:startColor="#AA000011" android:endColor="#22001133"
 				android:angle="270" />
 			<padding android:left="1dp" android:top="1dp" android:right="1dp"
 				android:bottom="1dp" />

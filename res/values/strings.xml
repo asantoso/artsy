@@ -5,4 +5,25 @@
     <string name="search_hint"></string>
     <string name="search_buttontext">Find</string>
     <string name="search_voiceprompttext">Invoke</string>
+    <string name="no_data">no data connectivity</string>
+    <string name="no_active_network">no active network</string>
+    <string name="please_try_again">please try again</string>
+    <string name="find_images">Find images</string>
+    <string name="confirm_setwallpaper">Do you want to set this image as wallpaper?</string>
+    <string name="applying_wallpaper">Applying chosen image as wallpaper</string>
+    <string name="fetching_nextpage">fetching next page..</string>
+    <string name="fetching_prevpage">fetching previous page..</string>    
+    <string name="uploaded_by">uploaded by</string>
+    <string name="location">location</string>
+    <string name="tags">tags</string>    
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="no_more_images">No more images</string>
+    <string name="searching_for">searching for: </string>
+    <string name="set_wallpaper_successful">Image has been set as wallpaper</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    
+    
 </resources>
+

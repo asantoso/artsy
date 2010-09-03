@@ -30,7 +30,7 @@
     android:paddingRight="12dip"
     
     android:id="@+id/image"
-    android:scaleType="centerInside"       
+    android:scaleType="fitCenter"       
     
     android:focusableInTouchMode="true"
     

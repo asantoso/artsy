@@ -26,7 +26,7 @@ public class Paging implements Parcelable{
 	
 	public int page = 0;
 	public int pages = 0;
-	public int perPage = 20;
+	public int perPage = 10;
 	public int total = 0;
 	
 	public int getPages() {

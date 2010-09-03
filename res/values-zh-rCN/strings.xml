@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Artsy</string>    
+    <string name="search_label">查找圖像</string>
+    <string name="search_hint"></string>
+    <string name="search_buttontext">发觉</string>
+    <string name="search_voiceprompttext">祝</string>
+    <string name="no_data">没有连接</string>
+    <string name="no_active_network">没有网络</string>
+    <string name="please_try_again">请再试一次</string>
+    <string name="find_images">查找圖像</string>
+    <string name="confirm_setwallpaper">你要設置這個圖片為牆紙？</string>
+    <string name="applying_wallpaper">選擇圖片作為牆紙的應用</string>
+    <string name="fetching_nextpage">取下一頁 ..</string>
+    <string name="fetching_prevpage">取前一頁 ..</string>    
+    <string name="uploaded_by">上载者</string>
+    <string name="location">位置</string>
+    <string name="tags">标签</string>    
+    <string name="next">下一组</string>
+    <string name="previous">前集</string>
+    <string name="no_more_images">空集</string>
+    <string name="searching_for">搜索: </string>
+    <string name="set_wallpaper_successful">图像已被设置为墙纸</string>
+    <string name="yes">是</string>
+    <string name="no">不</string>
+</resources>
+

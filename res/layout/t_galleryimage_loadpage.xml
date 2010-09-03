@@ -20,7 +20,12 @@
     android:text="load next set"   
     android:textSize="15dip"
     android:textStyle="bold"
-    android:textColor="#FFffffff"   
+    android:textColor="#FF000000"
+    
+    android:shadowColor="#AA444444"
+    android:shadowDx="2"
+    android:shadowDy="2"
+    android:shadowRadius="2"   
     
 />
 
