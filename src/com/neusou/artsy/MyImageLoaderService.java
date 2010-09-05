@@ -11,10 +11,6 @@ public class MyImageLoaderService extends ImageLoaderService{
 
 	public static final String LOG_TAG = Logger.registerLog(ImageLoaderService.class);
 	
-	public MyImageLoaderService() {
-		super();		
-	}
-	
 	@Override
 	public void onDestroy() {	
 		super.onDestroy();
@@ -25,7 +21,8 @@ public class MyImageLoaderService extends ImageLoaderService{
 	public void onCreate() {
 		mContext = this;
 		super.onCreate();
-		Logger.l(Logger.DEBUG, LOG_TAG, "onCreate");		
+		Logger.l(Logger.DEBUG, LOG_TAG, "onCreate");	
+		mImageLoader.initCacheDatabase(this,mCacheDbName,R.raw.bioroid_imageloader_cache);
 	}
 	
 	@Override

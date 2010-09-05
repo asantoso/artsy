@@ -6,7 +6,6 @@ import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.KeyStore.LoadStoreParameter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,7 +40,6 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.DisplayMetrics;
 import android.util.Log;
-
 import android.view.ContextMenu;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -653,7 +651,7 @@ public class Main extends BaseActivity {
 
 				}
 
-				if (methodId == Flickr.METHOD_PHOTOS_GETINFO) {
+				if (restMethod instanceof Flickr.FlickrPhotosGetInfo) {
 					try {
 						JSONObject json = new JSONObject(response.getData());
 						// Log.d(Main.LOG_TAG,"PhotoGetInfo: "+json.toString(2));
@@ -1230,9 +1228,9 @@ public class Main extends BaseActivity {
 					break;
 				}
 				case R.id.METHOD_PHOTOS_SEARCH: {
-					doPhotoSearch(0, query, null);
+					doPhotoSearch(0, null, query);
 					break;
-				}
+				}			
 				}
 
 			}
@@ -1286,11 +1284,11 @@ public class Main extends BaseActivity {
 		Flickr.FlickrPhotosSearch method = new Flickr.FlickrPhotosSearch();
 		method.tags = tags == null ? "" : tags;
 		method.text = text == null ? "" : text;
-		method.sort = Flickr.FlickrPhotosSearch.Sort.Relevance.value;
+		method.sort = Flickr.FlickrPhotosSearch.Sort.InterestingnessDesc.value;
 		method.in_gallery = false;
 		method.paging = resultPaging;
 		method.tag_mode = Flickr.FlickrPhotosSearch.TagMode.all.value;
-		method.content_type = Flickr.FlickrPhotosSearch.ContentType.other_only.value;
+		method.content_type = Flickr.FlickrPhotosSearch.ContentType.photos_and_other.value;
 		method.setCallId(callId);
 		rest.putExtra(flickr.restfulClient.XTRA_METHOD, method);
 		startService(rest);
@@ -1421,8 +1419,7 @@ public class Main extends BaseActivity {
 					} else {
 						String imagePath = imageUrl.toString();
 						Log.d("Main", imagePath);
-						Bitmap img = App.mImageLoaderService.loadImage(
-								imagePath, false);
+						Bitmap img = App.mImageLoaderService.loadImage(imagePath, false);
 						// Bitmap img = ((WeakReference<Bitmap>)
 						// tag.imageView.get().getTag()).get();
 						if (img == null) {
@@ -1457,6 +1454,8 @@ public class Main extends BaseActivity {
 	}
 
 	public void clearCaptions() {
+		
+		
 		mCaption.setText("");
 		mCaption2.setText("");
 		mCaption3.setText("");
@@ -1479,11 +1478,10 @@ public class Main extends BaseActivity {
 		clearContents();
 		Photo currentPhoto = photos[i];
 		URL imageUrl;
-		doPhotosGetInfo(getAndIncrementCallId(Flickr.METHOD_PHOTOS_GETINFO),
-				currentPhoto.id);
+		doPhotosGetInfo(getAndIncrementCallId(Flickr.METHOD_PHOTOS_GETINFO), currentPhoto.id);
 
 		try {
-			imageUrl = currentPhoto.createImageUrl(Size.normal);
+			imageUrl = currentPhoto.createImageUrl(Size.small);
 		} catch (MalformedURLException e3) {
 			e3.printStackTrace();
 			return;
@@ -1814,20 +1812,22 @@ class GaleryAdapter extends BaseAdapter {
 			imageDataTag = new GalleryImageTag();
 			imageDataTag.imageView = new SoftReference<ImageView>(
 					(ImageView) convertView.findViewById(R.id.image));
-			// imageDataTag.loadingView = new
-			// SoftReference<ImageView>((ImageView)
-			// convertView.findViewById(R.id.loading));
+			imageDataTag.loadingView = new SoftReference<ImageView>((ImageView) convertView.findViewById(R.id.loading));			
 			convertView
 					.setTag(R.id.tag_galleryadapter_image_data, imageDataTag);
 		} else {
 			// Log.d("crate","using existing new imagetag "+position);
 		}
 
+		//apply rotation animation
 		/*
-		 * try{ Animation rotate = AnimationUtils.loadAnimation(ctx,
-		 * R.anim.rotateright); rotate.setRepeatMode(Animation.INFINITE);
-		 * imageDataTag.loadingView.get().startAnimation(rotate);
-		 * }catch(NullPointerException e){ }
+		 try{ 
+			 Animation rotate = AnimationUtils.loadAnimation(ctx,
+					R.anim.rotateright); 
+			 rotate.setRepeatMode(Animation.INFINITE);
+			 imageDataTag.loadingView.get().startAnimation(rotate);
+		 }
+		 catch(NullPointerException e){ }
 		 */
 
 		imageDataTag.dataIndexPosition = position - offset;

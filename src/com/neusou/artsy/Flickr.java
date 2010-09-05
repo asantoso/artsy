@@ -219,7 +219,7 @@ public class Flickr {
 		return paging;
 	}
 	
-	public static class Photo {
+	public static class Photo implements Parcelable{
 		public String farm;
 		public String id;
 		public String secret;
@@ -274,6 +274,18 @@ public class Flickr {
 			.append(".jpg");
 			return new URL(sb.toString());
 		}
+
+		@Override
+		public int describeContents() {
+			return 0;
+		}
+
+		@Override
+		public void writeToParcel(Parcel dest, int flags) {
+		
+		}
+		
+		
 	}
 	
 	public static class FlickrGetFrob extends RestfulClient.BaseRestfulMethod{
@@ -337,7 +349,7 @@ public class Flickr {
 		public String tags;
 		public String text;
 		public String tag_mode = TagMode.any.value;
-		public String sort = Sort.DatePostedDesc.value;
+		public String sort = Sort.InterestingnessDesc.value;
 		public boolean in_gallery = true;
 		public int content_type = ContentType.photos_only.value;
 		public Paging paging = new Paging();
@@ -422,12 +434,16 @@ public class Flickr {
 			data.putString(param_api_key, API_KEY);
 			data.putString(param_format, format_json);
 			tags = tags.trim().replace(" ", ",");
-			data.putString(param_tags, tags);
+			if(tags != null && tags.trim().length() > 0){
+				data.putString(param_tags, tags);
+			}
 			data.putString(param_tag_mode, tag_mode);
 			data.putString(param_sort, sort);
-			//data.putString(param_text, text);
+			if(text != null && text.trim().length() > 0){
+				data.putString(param_text, text);
+			}
 			data.putString(param_in_gallery,"false"); 
-			data.putString(param_content_type, Integer.toOctalString(content_type));
+			data.putString(param_content_type, Integer.toString(content_type));
 			data.putString(param_page, Integer.toString(paging.getPage()));
 			data.putString(param_per_page, Integer.toString(paging.getPerPage()));			
 			

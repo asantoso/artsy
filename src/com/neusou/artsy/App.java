@@ -35,7 +35,7 @@ public class App extends Application{
 	public static WebView mWebView;
 	private static final String PREFS = "pref";
 	private static final String PREFS_SEARCH_KEYWORD = "search.keyword";
-	private static final String PREFS_SEARCH_KEYWORD_DEFAULT = "watercolor";
+	private static final String PREFS_SEARCH_KEYWORD_DEFAULT = "wallpaper";
 	
 	MediaScannerConnectionClient mMediaScannerClient = new MediaScannerConnectionClient() {
 		
