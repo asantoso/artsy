@@ -96,11 +96,12 @@ public class App extends Application{
 	
 	@Override
 	public void onCreate() {	
-		super.onCreate();		
+		super.onCreate();	
+		Logger.l(Logger.DEBUG, LOG_TAG, "onCreate");
 		AdManager.setAllowUseOfLocation(true);	
-
+		Flickr.getInstance(this);
 		pixelDensity = getResources().getDisplayMetrics().density;
-		Flickr.getInstance().setContext(this);
+		
 //		bindService(new Intent(App.this,MediaScannerConnection.class), mMediaScannerConn, Context.BIND_AUTO_CREATE);
 		bindService(new Intent(App.this,FlickrService.class), mFlickrServiceConn, Context.BIND_AUTO_CREATE);
 		bindService(new Intent(App.this,MyImageLoaderService.class), mImageLoaderServiceConn, Context.BIND_AUTO_CREATE);

@@ -24,12 +24,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.neusou.bioroid.restful.RestfulClient;
+import com.neusou.bioroid.restful.RestfulResponseHandler;
 import com.neusou.bioroid.restful.RestfulClient.RestfulResponse;
 import com.neusou.artsy.R;
 
@@ -100,24 +102,33 @@ public class Flickr {
 		restfulMethodMap.put(METHOD_PHOTOS_GETINFO, "flickr.photos.getInfo");
 	}
 
+	private final String CACHE_DB_NAME = "flickr";
+	private final int CACHE_DB_VERSION = 1;
+	
 	private Flickr() {
 		restfulClient = new RestfulClient<RestfulResponse>(mContext, methodsMap, new DefaultResponseHandler(),"flickr");
+		restfulClient.initCacheDatabase(mContext, CACHE_DB_NAME, CACHE_DB_VERSION, R.raw.bioroid_restful_cache);
 	}
 
-	final static Flickr INSTANCE = new Flickr();
-	
-	Context mContext;
+	static Flickr INSTANCE = null;
+	 
+	static Context mContext; 
 
-	public static Flickr getInstance() {
+	public static Flickr getInstance(){
 		return INSTANCE;
 	}
 	
-	public void setContext(Context ctx){
-		mContext = ctx;
-		restfulClient.setContext(ctx);
+	public static Flickr getInstance(Context context) {
+		if(mContext == null){
+			mContext = context;
+		}
+		if(INSTANCE == null){
+			INSTANCE = new Flickr();			
+		}
+		return INSTANCE;
 	}
-
-	class DefaultResponseHandler implements ResponseHandler<RestfulResponse> {
+		
+	static class DefaultResponseHandler extends RestfulResponseHandler<RestfulResponse> {
 		
 		@Override
 		public RestfulResponse handleResponse(HttpResponse response)
@@ -150,6 +161,11 @@ public class Flickr {
 			return rsp;
 			//return new IRestfulResponse(tmp2);
 		}
+
+		@Override
+		public RestfulResponse createResponse(String data) {
+			return new RestfulResponse(data);
+		}
 	};
 	
 	public String createRequestString(Bundle data) throws Exception {
@@ -169,8 +185,7 @@ public class Flickr {
 				sb.append(data.getString(key));
 			}
 			return sb.toString();
-		
-		
+				
 	}
 
 	public String createRequestSignature(String secret, Bundle data)
@@ -436,7 +451,7 @@ public class Flickr {
 			tags = tags.trim().replace(" ", ",");
 			if(tags != null && tags.trim().length() > 0){
 				data.putString(param_tags, tags);
-			}
+			} 
 			data.putString(param_tag_mode, tag_mode);
 			data.putString(param_sort, sort);
 			if(text != null && text.trim().length() > 0){
@@ -446,6 +461,8 @@ public class Flickr {
 			data.putString(param_content_type, Integer.toString(content_type));
 			data.putString(param_page, Integer.toString(paging.getPage()));
 			data.putString(param_per_page, Integer.toString(paging.getPerPage()));			
+			
+			b.putBoolean(RestfulClient.KEY_USE_CACHE, true);
 			
 			Flickr flickr = Flickr.getInstance();			
 			try {
@@ -510,6 +527,7 @@ public class Flickr {
 			data.putString(param_page, Integer.toString(paging.getPage()));
 			data.putString(param_per_page, Integer.toString(paging.getPerPage()));
 			
+		
 			Flickr flickr = Flickr.getInstance();
 			
 			try {

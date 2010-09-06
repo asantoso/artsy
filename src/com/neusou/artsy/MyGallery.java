@@ -2,14 +2,12 @@ package com.neusou.artsy;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Gallery;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 public class MyGallery extends Gallery{
 

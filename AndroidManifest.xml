@@ -49,6 +49,7 @@
     	 
     	<service android:name=".FlickrService" android:enabled="true" >
     		<meta-data android:name="identifier" android:value="flickr" />
+    		<meta-data android:name="cacheResponse" android:value="true" />
     		<intent-filter>    		    		 	
     		 	<action android:name="com.neusou.artsy.flickr.restful.EXECUTE_REQUEST"/>
     		</intent-filter>

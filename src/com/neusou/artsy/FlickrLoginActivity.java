@@ -1,32 +1,23 @@
 package com.neusou.artsy;
 
-import java.io.File;
 import java.security.NoSuchAlgorithmException;
 
 import org.json.JSONObject;
 
-import com.neusou.bioroid.restful.RestfulCallback;
-import com.neusou.bioroid.restful.RestfulClient.RestfulMethod;
-import com.neusou.bioroid.restful.RestfulClient.RestfulResponse;
-
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MotionEvent;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.webkit.CookieManager;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+
+import com.neusou.bioroid.restful.RestfulCallback;
+import com.neusou.bioroid.restful.RestfulClient.RestfulMethod;
+import com.neusou.bioroid.restful.RestfulClient.RestfulResponse;
 
 public class FlickrLoginActivity extends Activity {
 
